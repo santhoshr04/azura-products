@@ -52,11 +52,16 @@
 
                 <div class="lg:col-span-2">
                     <x-form.select name="status" label="Status">
-                        <option value="">All statuses</option>
+                        @php
+                            $statusFilter = request()->has('status')
+                                ? (string) request('status')
+                                : \App\Enums\Status::Active->value;
+                        @endphp
+                        <option value="" @selected($statusFilter === '')>All statuses</option>
                         @foreach (\App\Enums\Status::cases() as $status)
                             <option
                                 value="{{ $status->value }}"
-                                @selected(request('status', \App\Enums\Status::Active->value) === $status->value)
+                                @selected($statusFilter === $status->value)
                             >
                                 {{ $status->value }}
                             </option>

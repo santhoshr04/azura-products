@@ -47,6 +47,18 @@
                         >
                             Categories
                         </a>
+
+                        <a
+                            href="{{ route('activities.index') }}"
+                            data-confirm-leave
+                            @class([
+                                'rounded-md px-3 py-2 transition',
+                                'bg-slate-100 text-slate-900' => request()->routeIs('activities.*'),
+                                'text-slate-600 hover:bg-slate-100 hover:text-slate-900' => ! request()->routeIs('activities.*'),
+                            ])
+                        >
+                            Activity
+                        </a>
                     </nav>
                 </div>
             </header>

@@ -9,12 +9,32 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 #[Fillable(['name', 'status'])]
 class Category extends Model
 {
     /** @use HasFactory<CategoryFactory> */
-    use HasFactory;
+    use HasFactory, LogsActivity;
+
+    /**
+     * Configure the activity log for the category.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('category')
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges()
+            ->setDescriptionForEvent(fn (string $event): string => match ($event) {
+                'created' => "Category \"{$this->name}\" was created",
+                'updated' => "Category \"{$this->name}\" was updated",
+                'deleted' => "Category \"{$this->name}\" was deleted",
+                default => "Category \"{$this->name}\" was {$event}",
+            });
+    }
 
     /**
      * Get the products that belong to the category.

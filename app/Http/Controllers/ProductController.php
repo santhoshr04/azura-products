@@ -17,11 +17,15 @@ class ProductController extends Controller
      */
     public function index(Request $request): View
     {
+        $status = $request->has('status')
+            ? $request->string('status')->toString()
+            : Status::Active->value;
+
         $products = Product::query()
             ->with('category')
             ->search($request->string('search')->toString())
             ->ofCategory($request->string('category')->toString())
-            ->ofStatus($request->string('status')->toString() ?: \App\Enums\Status::Active->value)
+            ->ofStatus($status)
             ->sort($request->string('sort')->toString(), $request->string('direction')->toString())
             ->paginate(5)
             ->withQueryString();
